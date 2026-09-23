@@ -1,0 +1,186 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  NASABAH
+  ADMIN
+}
+
+model AppMaker {
+  id                  String           @id @default(uuid())
+  email               String           @unique
+  password            String
+  namaSiswa           String
+  kelas               String
+  namaApp             String
+  appKey              String           @unique @default(uuid())
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+
+  users               User[]
+  nasabahs            Nasabah[]
+  adminBanks          AdminBank[]
+  kategoriSampahs     KategoriSampah[]
+  hadiahs             Hadiah[]
+  setorSampahs        SetorSampah[]
+  penukaranPoins      PenukaranPoin[]
+
+  @@map("app_makers")
+}
+
+model User {
+  id                  String           @id @default(uuid())
+  appMakerId          String
+  username            String
+  password            String
+  role                Role
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+
+  appMaker            AppMaker         @relation(fields: [appMakerId], references: [id], onDelete: Cascade)
+  nasabah             Nasabah?
+  adminBank           AdminBank?
+
+  @@unique([appMakerId, username])
+  @@map("users")
+}
+
+model Nasabah {
+  id                  String           @id @default(uuid())
+  userId              String           @unique
+  appMakerId          String
+  namaNasabah         String
+  alamat              String           @db.Text
+  telp                String
+  tanggalLahir        String?
+  saldoPoin           Float            @default(0)
+  foto                String?          @db.Text
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+
+  user                User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  appMaker            AppMaker         @relation(fields: [appMakerId], references: [id], onDelete: Cascade)
+  setorSampahs        SetorSampah[]
+  penukaranPoins      PenukaranPoin[]
+
+  @@map("nasabah")
+}
+
+model AdminBank {
+  id                  String           @id @default(uuid())
+  userId              String           @unique
+  appMakerId          String
+  namaUnit            String
+  namaPengelola       String
+  telp                String
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+
+  user                User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  appMaker            AppMaker         @relation(fields: [appMakerId], references: [id], onDelete: Cascade)
+
+  @@map("admin_bank")
+}
+
+model KategoriSampah {
+  id                  String           @id @default(uuid())
+  appMakerId          String
+  namaKategori        String
+  hargaPerKg          Float
+  poinPerKg           Float
+  jenis               String           // 'plastik' | 'kertas' | 'logam' | 'kaca'
+  foto                String?          @db.Text
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+
+  appMaker            AppMaker         @relation(fields: [appMakerId], references: [id], onDelete: Cascade)
+  detailSetors        DetailSetor[]
+
+  @@map("kategori_sampah")
+}
+
+model SetorSampah {
+  id                  String           @id @default(uuid())
+  appMakerId          String
+  nasabahId           String
+  kodeSetor           String
+  tanggal             DateTime
+  status              String           @default("menunggu_konfirmasi") // 'menunggu_konfirmasi' | 'diverifikasi' | 'selesai' | 'ditolak'
+  catatan             String           @db.Text
+  catatanAdmin        String?          @db.Text
+  fotoBukti           String?          @db.Text
+  totalBeratKg        Float
+  estimasiTotalPoin   Float
+  totalPoin           Float?
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+
+  appMaker            AppMaker         @relation(fields: [appMakerId], references: [id], onDelete: Cascade)
+  nasabah             Nasabah          @relation(fields: [nasabahId], references: [id], onDelete: Cascade)
+  detailSetors        DetailSetor[]
+
+  @@unique([appMakerId, kodeSetor])
+  @@map("setor_sampah")
+}
+
+model DetailSetor {
+  id                  String           @id @default(uuid())
+  setorSampahId       String
+  kategoriSampahId    String
+  beratKg             Float
+  beratKgReal         Float?
+  subtotalPoin        Float
+  poinPerKg           Float?
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+
+  setorSampah         SetorSampah      @relation(fields: [setorSampahId], references: [id], onDelete: Cascade)
+  kategoriSampah      KategoriSampah   @relation(fields: [kategoriSampahId], references: [id], onDelete: Restrict)
+
+  @@map("detail_setor")
+}
+
+model Hadiah {
+  id                  String           @id @default(uuid())
+  appMakerId          String
+  namaHadiah          String
+  kategori            String           @default("digital") 
+  poinDibutuhkan      Float
+  stok                Int
+  foto                String?          @db.Text
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+
+  appMaker            AppMaker         @relation(fields: [appMakerId], references: [id], onDelete: Cascade)
+  penukaranPoins      PenukaranPoin[]
+
+  @@map("hadiah")
+}
+
+model PenukaranPoin {
+  id                  String           @id @default(uuid())
+  appMakerId          String
+  nasabahId           String
+  hadiahId            String
+  kodePenukaran       String
+  kodeVoucher         String?
+  tanggal             DateTime
+  poinTerpakai        Float
+  sisaSaldoPoin       Float
+  status              String           @default("diproses") // 'diproses' | 'selesai'
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+
+  appMaker            AppMaker         @relation(fields: [appMakerId], references: [id], onDelete: Cascade)
+  nasabah             Nasabah          @relation(fields: [nasabahId], references: [id], onDelete: Cascade)
+  hadiah              Hadiah           @relation(fields: [hadiahId], references: [id], onDelete: Restrict)
+
+  @@unique([appMakerId, kodePenukaran])
+  @@map("penukaran_poin")
+}

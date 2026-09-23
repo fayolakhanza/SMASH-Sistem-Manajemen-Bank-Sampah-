@@ -1,0 +1,1422 @@
+{
+  "info": {
+    "_postman_id": "89f64871-bc01-4475-bce6-31a8bc1d61ef",
+    "name": "SMASH - Bank Sampah Digital & Daur Ulang (UKK RPL 2026/2027)",
+    "description": "Dokumentasi Postman API lengkap untuk Aplikasi SMASH - Bank Sampah Digital & Daur Ulang Multi-Tenant (Eco-Waste Management System) Paket A UKK RPL 2026/2027 SMK Telkom Malang.\nMendukung 37 Endpoint, Isolasi Data via Header x-app-key, JWT Multi-Role, Multi-Item Penyetoran Sampah, Transaksi Atomik Penukaran Poin & Voucher Digital.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "app_key",
+      "value": "c51b4cce-6037-4bba-b28d-673c1effd7be",
+      "type": "string"
+    },
+    {
+      "key": "admin_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "nasabah_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "nasabah_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "kategori_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "hadiah_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "setor_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "penukaran_id",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. App Maker (Tenant Key)",
+      "item": [
+        {
+          "name": "1. Register App Maker (Dapatkan App Key)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData && jsonData.data && jsonData.data.appKey) {",
+                  "    pm.collectionVariables.set('app_key', jsonData.data.appKey);",
+                  "    console.log('App Key tersimpan: ' + jsonData.data.appKey);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"siswa1@smk.sch.id\",\n  \"password\": \"password123\",\n  \"namaSiswa\": \"Budi Santoso\",\n  \"kelas\": \"XII RPL 1\",\n  \"namaApp\": \"smash\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/maker/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "maker",
+                "register"
+              ]
+            }
+          }
+        },
+        {
+          "name": "2. Login App Maker",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData && jsonData.data && jsonData.data.appKey) {",
+                  "    pm.collectionVariables.set('app_key', jsonData.data.appKey);",
+                  "    console.log('App Key tersimpan: ' + jsonData.data.appKey);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"siswa1@smk.sch.id\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/maker/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "maker",
+                "login"
+              ]
+            }
+          }
+        },
+        {
+          "name": "3. Get Profile App Maker & Stats",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-app-key",
+                "value": "{{app_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/maker/profile",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "maker",
+                "profile"
+              ]
+            }
+          }
+        },
+        {
+          "name": "4. Check App Key by Email Siswa",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData && jsonData.data && jsonData.data.appKey) {",
+                  "    pm.collectionVariables.set('app_key', jsonData.data.appKey);",
+                  "    console.log('App Key tersimpan: ' + jsonData.data.appKey);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/maker/check-key?email=siswa1@smk.sch.id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "maker",
+                "check-key"
+              ],
+              "query": [
+                {
+                  "key": "email",
+                  "value": "siswa1@smk.sch.id"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Autentikasi Pengguna (Nasabah & Admin)",
+      "item": [
+        {
+          "name": "5. Registrasi Akun Nasabah Baru (Mendukung Upload Foto)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-app-key",
+                "value": "{{app_key}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "username",
+                  "value": "nasabah_dewi",
+                  "type": "text"
+                },
+                {
+                  "key": "password",
+                  "value": "password123",
+                  "type": "text"
+                },
+                {
+                  "key": "namaNasabah",
+                  "value": "Dewi Lestari",
+                  "type": "text"
+                },
+                {
+                  "key": "alamat",
+                  "value": "Jl. Kenanga No. 5, RT 02/01",
+                  "type": "text"
+                },
+                {
+                  "key": "telp",
+                  "value": "081987654321",
+                  "type": "text"
+                },
+                {
+                  "key": "foto",
+                  "type": "file",
+                  "src": [],
+                  "description": "(Opsional) File binary foto profil jpg/png. Jika tanpa foto, request tetap valid."
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/nasabah/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "nasabah",
+                "register"
+              ]
+            }
+          }
+        },
+        {
+          "name": "6. Pendaftaran Unit Admin Bank Sampah",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-app-key",
+                "value": "{{app_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin_banksampah\",\n  \"password\": \"admin123\",\n  \"namaUnit\": \"Bank Sampah Asri Jaya\",\n  \"namaPengelola\": \"Bapak H. Sukirman\",\n  \"telp\": \"081234567890\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/admin/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "admin",
+                "register"
+              ]
+            }
+          }
+        },
+        {
+          "name": "7.1 Login Admin Bank Sampah",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData && jsonData.data && jsonData.data.token) {",
+                  "    pm.collectionVariables.set('admin_token', jsonData.data.token);",
+                  "    console.log('Admin Token tersimpan');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-app-key",
+                "value": "{{app_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin_banksampah\",\n  \"password\": \"admin123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "login"
+              ]
+            }
+          }
+        },
+        {
+          "name": "7.2 Login Nasabah (Budi)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData && jsonData.data && jsonData.data.token) {",
+                  "    pm.collectionVariables.set('nasabah_token', jsonData.data.token);",
+                  "    if (jsonData.data.nasabah) {",
+                  "        pm.collectionVariables.set('nasabah_id', jsonData.data.nasabah.id);",
+                  "    }",
+                  "    console.log('Nasabah Token tersimpan');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-app-key",
+                "value": "{{app_key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"nasabah_budi\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "login"
+              ]
+            }
+          }
+        },
+        {
+          "name": "8. Get Profile User yang Sedang Login (/me)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-app-key",
+                "value": "{{app_key}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{nasabah_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "me"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Admin - CRUD Data Nasabah",
+      "item": [
+        {
+          "name": "9. Admin: Get Semua Data Nasabah",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-app-key",
+                "value": "{{app_key}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/nasabah",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "nasabah"
+              ]
+            }
+          }
+        },
+        {
+          "name": "10. Admin: Tambah Data Nasabah Baru",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-app-key",
+                "value": "{{app_key}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"nasabah_andi\",\n  \"password\": \"password123\",\n  \"namaNasabah\": \"Andi Pratama\",\n  \"alamat\": \"Jl. Semanggi Timur No. 12\",\n  \"telp\": \"081234111222\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/nasabah",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "nasabah"
+              ]
+            }
+          }
+        },
+        {
+          "name": "11. Admin: Get Detail Data Nasabah",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-app-key",
+                "value": "{{app_key}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/nasabah/{{nasabah_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "nasabah",
+                "{{nasabah_id}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "12. Admin: Update Data Nasabah",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "x-app-key",
+                "value": "{{app_key}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"namaNasabah\": \"Budi Santoso, S.Kom\",\n  \"alamat\": \"Jl. Merdeka No. 15, RT 04/05\",\n  \"telp\": \"085678909999\",\n  \"tanggalLahir\": \"2000-01-15\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/nasabah/{{nasabah_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "nasabah",
+                "{{nasabah_id}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "13. Admin: Hapus Data Nasabah",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "x-app-key",
+                "value": "{{app_key}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/nasabah/{{nasabah_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "nasabah",
+                "{{nasabah_id}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Kategori Sampah Daur Ulang",
+      "item": [
+        {
+          "name": "14. Get Daftar Kategori Sampah",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData && jsonData.data && jsonData.data.length > 0) {",
+                  "    pm.collectionVariables.set('kategori_id', jsonData.data[0].id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-app-key",
+                "value": "{{app_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/kategori-sampah",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "kategori-sampah"
+              ]
+            }
+          }
+        },
+        {
+          "name": "15. Admin: Tambah Kategori Sampah Baru",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-app-key",
+                "value": "{{app_key}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"namaKategori\": \"Tembaga Super\",\n  \"hargaPerKg\": 75000,\n  \"poinPerKg\": 150,\n  \"jenis\": \"logam\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/kategori-sampah",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "kategori-sampah"
+              ]
+            }
+          }
+        },
+        {
+          "name": "16. Get Detail Kategori Sampah",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-app-key",
+                "value": "{{app_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/kategori-sampah/{{kategori_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "kategori-sampah",
+                "{{kategori_id}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "17. Admin: Update Kategori Sampah",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "x-app-key",
+                "value": "{{app_key}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"namaKategori\": \"Botol Plastik PET Bersih & Kering\",\n  \"hargaPerKg\": 4000,\n  \"poinPerKg\": 12,\n  \"jenis\": \"plastik\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/kategori-sampah/{{kategori_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "kategori-sampah",
+                "{{kategori_id}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "18. Admin: Hapus Kategori Sampah",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "x-app-key",
+                "value": "{{app_key}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/kategori-sampah/{{kategori_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "kategori-sampah",
+                "{{kategori_id}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Penyetoran Sampah (Pengajuan & Verifikasi)",
+      "item": [
+        {
+          "name": "19. Nasabah: Ajukan Penyetoran Sampah (Multi-Item, Kg/Ton & Foto Bukti)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData && jsonData.data && jsonData.data.id) {",
+                  "    pm.collectionVariables.set('setor_id', jsonData.data.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-app-key",
+                "value": "{{app_key}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{nasabah_token}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "fotoBukti",
+                  "type": "file",
+                  "src": []
+                },
+                {
+                  "key": "tanggal",
+                  "value": "2026-08-26T10:00:00.000Z",
+                  "type": "text"
+                },
+                {
+                  "key": "catatan",
+                  "value": "Sampah sudah dipilah rapi dalam karung",
+                  "type": "text"
+                },
+                {
+                  "key": "items",
+                  "value": "[{\"kategoriSampahId\": \"{{kategori_id}}\", \"berat\": 4.5, \"beratKg\": 4.5, \"satuan\": \"kg\"}]",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/setor-sampah/pengajuan",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "setor-sampah",
+                "pengajuan"
+              ]
+            }
+          }
+        },
+        {
+          "name": "20. Nasabah: Get Histori Penyetoran Sampah Sendiri",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-app-key",
+                "value": "{{app_key}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{nasabah_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/setor-sampah/my-setor?bulan=2026-08",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "setor-sampah",
+                "my-setor"
+              ],
+              "query": [
+                {
+                  "key": "bulan",
+                  "value": "2026-08"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "21. Admin: Get Semua Pengajuan Penyetoran",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-app-key",
+                "value": "{{app_key}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/setor-sampah/admin/list?status=menunggu_konfirmasi&bulan=2026-08",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "setor-sampah",
+                "admin",
+                "list"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "menunggu_konfirmasi"
+                },
+                {
+                  "key": "bulan",
+                  "value": "2026-08"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "22. Detail Transaksi / Struk Nota Penyetoran Sampah",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-app-key",
+                "value": "{{app_key}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{nasabah_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/setor-sampah/{{setor_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "setor-sampah",
+                "{{setor_id}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "23. Admin: Verifikasi Timbangan Real & Selesai",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "x-app-key",
+                "value": "{{app_key}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"selesai\",\n  \"catatanAdmin\": \"Berat sampah sesuai hasil timbangan real petugas.\",\n  \"itemsReal\": [\n    {\n      \"kategoriSampahId\": \"{{kategori_id}}\",\n      \"beratKgReal\": 5.0\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/setor-sampah/admin/verify/{{setor_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "setor-sampah",
+                "admin",
+                "verify",
+                "{{setor_id}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Katalog Hadiah & Voucher",
+      "item": [
+        {
+          "name": "24. Get Katalog Hadiah & Voucher",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData && jsonData.data && jsonData.data.length > 0) {",
+                  "    pm.collectionVariables.set('hadiah_id', jsonData.data[0].id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-app-key",
+                "value": "{{app_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/hadiah",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "hadiah"
+              ]
+            }
+          }
+        },
+        {
+          "name": "25. Admin: Tambah Data Hadiah Baru",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-app-key",
+                "value": "{{app_key}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"namaHadiah\": \"Gula Pasir 1 Kg\",\n  \"poinDibutuhkan\": 60,\n  \"stok\": 30,\n  \"kategori\": \"fisik\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/hadiah",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "hadiah"
+              ]
+            }
+          }
+        },
+        {
+          "name": "26. Get Detail Hadiah",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-app-key",
+                "value": "{{app_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/hadiah/{{hadiah_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "hadiah",
+                "{{hadiah_id}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "27. Admin: Update Data Hadiah",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "x-app-key",
+                "value": "{{app_key}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"namaHadiah\": \"Voucher Pulsa / E-Wallet Rp 50.000\",\n  \"poinDibutuhkan\": 140,\n  \"stok\": 40,\n  \"kategori\": \"digital\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/hadiah/{{hadiah_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "hadiah",
+                "{{hadiah_id}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "28. Admin: Hapus Data Hadiah",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "x-app-key",
+                "value": "{{app_key}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/hadiah/{{hadiah_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "hadiah",
+                "{{hadiah_id}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. Penukaran Poin Hadiah & Nota",
+      "item": [
+        {
+          "name": "29. Nasabah: Tukar Poin dengan Hadiah / Voucher",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData && jsonData.data && jsonData.data.id) {",
+                  "    pm.collectionVariables.set('penukaran_id', jsonData.data.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-app-key",
+                "value": "{{app_key}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{nasabah_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"hadiahId\": \"{{hadiah_id}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/penukaran-poin/tukar",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "penukaran-poin",
+                "tukar"
+              ]
+            }
+          }
+        },
+        {
+          "name": "30. Nasabah: Get Histori Penukaran Poin Milik Sendiri",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-app-key",
+                "value": "{{app_key}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{nasabah_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/penukaran-poin/my-penukaran",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "penukaran-poin",
+                "my-penukaran"
+              ]
+            }
+          }
+        },
+        {
+          "name": "31. Admin: Get Semua Transaksi Penukaran Poin",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-app-key",
+                "value": "{{app_key}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/penukaran-poin/admin/list?bulan=2026-08",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "penukaran-poin",
+                "admin",
+                "list"
+              ],
+              "query": [
+                {
+                  "key": "bulan",
+                  "value": "2026-08"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "32. Admin: Update Status Penukaran Poin",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "x-app-key",
+                "value": "{{app_key}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"selesai\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/penukaran-poin/admin/status/{{penukaran_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "penukaran-poin",
+                "admin",
+                "status",
+                "{{penukaran_id}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "33. Detail Nota / Struk Bukti Transaksi Penukaran Poin",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-app-key",
+                "value": "{{app_key}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{nasabah_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/penukaran-poin/nota/{{penukaran_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "penukaran-poin",
+                "nota",
+                "{{penukaran_id}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "8. Rekapitulasi & Laporan Bulanan",
+      "item": [
+        {
+          "name": "34. Admin: Get Rekapitulasi Total Tonase & Pembayaran Bulanan",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-app-key",
+                "value": "{{app_key}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/rekapitulasi/bulanan?bulan=2026-08",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "rekapitulasi",
+                "bulanan"
+              ],
+              "query": [
+                {
+                  "key": "bulan",
+                  "value": "2026-08"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "9. Dashboard & Analytics",
+      "item": [
+        {
+          "name": "35. Nasabah: Get Dashboard Summary Saldo & Transaksi",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-app-key",
+                "value": "{{app_key}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{nasabah_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/dashboard/summary",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "dashboard",
+                "summary"
+              ]
+            }
+          }
+        },
+        {
+          "name": "36. Admin & App Maker: Get Overall Dashboard Stats",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-app-key",
+                "value": "{{app_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/dashboard/stats",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "dashboard",
+                "stats"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
