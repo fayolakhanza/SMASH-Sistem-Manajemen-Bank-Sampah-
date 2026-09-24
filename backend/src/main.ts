@@ -9,8 +9,13 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   const logger = new Logger('Bootstrap');
 
-  // Ensure upload directories exist in production container
-  const uploadDir = join(__dirname, '..', 'uploads');
+  // Di Vercel gunakan /tmp/uploads, di lokal gunakan ./uploads
+  const isProduction = process.env.NODE_ENV === 'production' || !!process.env.VERCEL;
+  const uploadDir = isProduction
+    ? '/tmp/uploads'
+    : join(__dirname, '..', 'uploads');
+
+  // Buat subdirektori yang diperlukan
   ['', 'nasabah', 'kategori', 'hadiah'].forEach((sub) => {
     const dir = join(uploadDir, sub);
     if (!existsSync(dir)) {
@@ -18,7 +23,7 @@ async function bootstrap() {
     }
   });
 
-  // Serve static uploaded files
+  // Sajikan file statis (foto profil, bukti sampah, gambar kategori, dll.)
   app.useStaticAssets(uploadDir, {
     prefix: '/uploads/',
   });
@@ -43,6 +48,7 @@ async function bootstrap() {
 
   const port = process.env.PORT || 3000;
   await app.listen(port, '0.0.0.0');
-  logger.log(`SMASH Backend is running on port ${port} (0.0.0.0:${port})`);
+  logger.log(`SMASH Backend is running on port ${port}`);
 }
 bootstrap();
+

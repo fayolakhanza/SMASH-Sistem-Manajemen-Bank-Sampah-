@@ -2,14 +2,22 @@ import { diskStorage } from 'multer';
 import { extname } from 'path';
 import * as fs from 'fs';
 
-const uploadDir = './uploads';
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
+// Di Vercel serverless, filesystem root hanya bisa tulis ke /tmp
+// Di development (lokal), gunakan ./uploads seperti biasa
+const isVercel = !!process.env.VERCEL || process.env.NODE_ENV === 'production';
+const uploadRoot = isVercel ? '/tmp/uploads' : './uploads';
+
+// Pastikan direktori root ada
+if (!fs.existsSync(uploadRoot)) {
+  fs.mkdirSync(uploadRoot, { recursive: true });
 }
 
 export const multerStorage = diskStorage({
   destination: (req, file, callback) => {
-    callback(null, uploadDir);
+    if (!fs.existsSync(uploadRoot)) {
+      fs.mkdirSync(uploadRoot, { recursive: true });
+    }
+    callback(null, uploadRoot);
   },
   filename: (req, file, callback) => {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
@@ -21,7 +29,7 @@ export const multerStorage = diskStorage({
 export const nasabahBuktiStorage = diskStorage({
   destination: (req: any, file, callback) => {
     const nasabahId = req.user?.nasabah?.id || 'umum';
-    const targetDir = `./uploads/nasabah/${nasabahId}`;
+    const targetDir = `${uploadRoot}/nasabah/${nasabahId}`;
     if (!fs.existsSync(targetDir)) {
       fs.mkdirSync(targetDir, { recursive: true });
     }
@@ -46,3 +54,4 @@ export function getNasabahBuktiUrl(req: any, filename?: string): string | undefi
   const baseUrl = process.env.APP_URL || `${req.protocol}://${req.get('host')}`;
   return `${baseUrl}/uploads/nasabah/${nasabahId}/${filename}`;
 }
+
