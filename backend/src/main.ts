@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { ValidationPipe, Logger } from '@nestjs/common';
+import { existsSync, mkdirSync } from 'fs';
 import { join } from 'path';
 import { AppModule } from './app.module';
 
@@ -8,8 +9,17 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   const logger = new Logger('Bootstrap');
 
+  // Ensure upload directories exist in production container
+  const uploadDir = join(__dirname, '..', 'uploads');
+  ['', 'nasabah', 'kategori', 'hadiah'].forEach((sub) => {
+    const dir = join(uploadDir, sub);
+    if (!existsSync(dir)) {
+      mkdirSync(dir, { recursive: true });
+    }
+  });
+
   // Serve static uploaded files
-  app.useStaticAssets(join(__dirname, '..', 'uploads'), {
+  app.useStaticAssets(uploadDir, {
     prefix: '/uploads/',
   });
 
@@ -32,7 +42,7 @@ async function bootstrap() {
   );
 
   const port = process.env.PORT || 3000;
-  await app.listen(port);
-  logger.log(`SMASH Backend is running on: http://localhost:${port}`);
+  await app.listen(port, '0.0.0.0');
+  logger.log(`SMASH Backend is running on port ${port} (0.0.0.0:${port})`);
 }
 bootstrap();
